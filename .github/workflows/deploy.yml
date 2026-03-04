@@ -31,19 +31,15 @@ jobs:
         run: |
           echo "${{ secrets.FIREBASE_CONFIG_JS }}" > config.js
       
+      - name: Prepare Public Files
+        run: |
+          mkdir public
+          cp index.html style.css app.js config.js manifest.json firebase-messaging-sw.js public/
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
-          # Exclude sensitive files and node_modules
-          pattern: |
-            !node_modules/
-            !service-account.json
-            !.github/
-            !update-daily-message.js
-            !send-daily-notifications.js
-            !package.json
-            !package-lock.json
+          path: './public'
       
       - name: Deploy to GitHub Pages
         id: deployment
