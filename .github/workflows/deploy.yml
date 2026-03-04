@@ -28,8 +28,10 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Create config.js
+        env:
+          CONFIG_JS: ${{ secrets.FIREBASE_CONFIG_JS }}
         run: |
-          echo "${{ secrets.FIREBASE_CONFIG_JS }}" > config.js
+          echo "$CONFIG_JS" > config.js
       
       - name: Prepare Public Files
         run: |
