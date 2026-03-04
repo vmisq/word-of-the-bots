@@ -26,6 +26,10 @@ jobs:
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
+      - name: Create config.js
+        run: |
+          echo "${{ secrets.FIREBASE_CONFIG_JS }}" > config.js
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
