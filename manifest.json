@@ -8,6 +8,11 @@
     "theme_color": "#4f46e5",
     "icons": [
         {
+            "src": "https://api.dicebear.com/9.x/bottts/svg?seed=word-of-the-bots",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        },
+        {
             "src": "https://api.dicebear.com/9.x/bottts/png?seed=word-of-the-bots",
             "sizes": "192x192",
             "type": "image/png"

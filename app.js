@@ -60,7 +60,16 @@ async function getToken() {
 
         let serviceWorkerRegistration;
         if ('serviceWorker' in navigator) {
-            serviceWorkerRegistration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+            try {
+                // Determine the correct path for the service worker
+                const scriptsPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) || '';
+                const swUrl = (scriptsPath ? scriptsPath + '/' : '') + 'firebase-messaging-sw.js';
+
+                serviceWorkerRegistration = await navigator.serviceWorker.register(swUrl, { scope: './' });
+                console.log("Service Worker registered successfully at:", swUrl, "with scope:", serviceWorkerRegistration.scope);
+            } catch (swErr) {
+                console.error("Manual Service Worker registration failed:", swErr);
+            }
         }
 
         const currentToken = await messaging.getToken({
