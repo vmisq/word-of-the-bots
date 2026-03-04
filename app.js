@@ -62,13 +62,17 @@ async function getToken() {
         if ('serviceWorker' in navigator) {
             try {
                 // Determine the correct path for the service worker
-                const scriptsPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) || '';
-                const swUrl = (scriptsPath ? scriptsPath + '/' : '') + 'firebase-messaging-sw.js';
+                // Ensure we include the current subpath (especially for GitHub Pages)
+                const scriptsPath = window.location.pathname.endsWith('/')
+                    ? window.location.pathname
+                    : window.location.pathname + '/';
+                const swUrl = scriptsPath + 'firebase-messaging-sw.js';
 
-                serviceWorkerRegistration = await navigator.serviceWorker.register(swUrl, { scope: './' });
-                console.log("Service Worker registered successfully at:", swUrl, "with scope:", serviceWorkerRegistration.scope);
+                console.log("Registering service worker at:", swUrl);
+                serviceWorkerRegistration = await navigator.serviceWorker.register(swUrl);
+                console.log("Service Worker registered successfully with scope:", serviceWorkerRegistration.scope);
             } catch (swErr) {
-                console.error("Manual Service Worker registration failed:", swErr);
+                console.error("Manual Service Worker registration failed (falling back to default):", swErr);
             }
         }
 
