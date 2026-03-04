@@ -58,8 +58,14 @@ async function getToken() {
             localStorage.setItem('last_vapid_key', VAPID_KEY);
         }
 
+        let serviceWorkerRegistration;
+        if ('serviceWorker' in navigator) {
+            serviceWorkerRegistration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+        }
+
         const currentToken = await messaging.getToken({
-            vapidKey: VAPID_KEY
+            vapidKey: VAPID_KEY,
+            serviceWorkerRegistration: serviceWorkerRegistration
         });
 
         if (currentToken) {
