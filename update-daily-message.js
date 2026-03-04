@@ -42,7 +42,7 @@ async function updateDailyMessage() {
     console.log(`Image URL: ${image}`);
 
     console.log("Step 3: Generating motivational message via Gemini...");
-    let text = "Stay focused and keep moving forward!"; // Fallback
+    let text = null;
     try {
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`;
         const geminiResponse = await fetch(geminiUrl, {
@@ -60,16 +60,19 @@ async function updateDailyMessage() {
         const result = await geminiResponse.json();
 
         if (!geminiResponse.ok) {
-            console.warn(`Warning: Gemini API returned error ${geminiResponse.status}.`, JSON.stringify(result));
+            console.error(`Error: Gemini API returned error ${geminiResponse.status}.`, JSON.stringify(result));
+            return; // EXIT WITHOUT UPDATING
         } else if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0].text) {
             text = result.candidates[0].content.parts[0].text.trim();
         } else {
-            console.warn("Warning: Gemini response missing expected fields.", JSON.stringify(result));
+            console.error("Error: Gemini response missing expected fields.", JSON.stringify(result));
+            return; // EXIT WITHOUT UPDATING
         }
     } catch (error) {
-        console.warn("Warning: Gemini API call failed, using fallback.", error.message);
+        console.error("Error: Gemini API call failed.", error.message);
+        return; // EXIT WITHOUT UPDATING
     }
-    console.log(`Text: ${text}`);
+    console.log(`Text generated: ${text}`);
 
     console.log("Step 4: Updating Firestore...");
     try {

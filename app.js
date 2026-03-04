@@ -8,6 +8,7 @@ const messaging = firebase.messaging();
 const db = firebase.firestore();
 
 // VAPID_KEY is also defined in config.js
+let getTokenPromise = null;
 
 const btnPermission = document.getElementById('btn-permission');
 const permissionStatus = document.getElementById('permission-status');
@@ -49,59 +50,67 @@ btnPermission.addEventListener('click', () => {
 });
 
 async function getToken() {
-    try {
-        // Automatically handle stale tokens if VAPID key changed
-        const savedVapid = localStorage.getItem('last_vapid_key');
-        if (savedVapid && savedVapid !== VAPID_KEY) {
-            console.log("VAPID key mismatch detected. Refreshing registration...");
-            await messaging.deleteToken();
-            localStorage.setItem('last_vapid_key', VAPID_KEY);
-        }
+    if (getTokenPromise) return getTokenPromise;
 
-        let serviceWorkerRegistration;
-        if ('serviceWorker' in navigator) {
-            try {
-                // Determine the correct path for the service worker
-                // Ensure we include the current subpath (especially for GitHub Pages)
-                const scriptsPath = window.location.pathname.endsWith('/')
-                    ? window.location.pathname
-                    : window.location.pathname + '/';
-                const swUrl = scriptsPath + 'firebase-messaging-sw.js';
-
-                console.log("Registering service worker at:", swUrl);
-                serviceWorkerRegistration = await navigator.serviceWorker.register(swUrl);
-                console.log("Service Worker registered successfully with scope:", serviceWorkerRegistration.scope);
-            } catch (swErr) {
-                console.error("Manual Service Worker registration failed (falling back to default):", swErr);
-            }
-        }
-
-        const currentToken = await messaging.getToken({
-            vapidKey: VAPID_KEY,
-            serviceWorkerRegistration: serviceWorkerRegistration
-        });
-
-        if (currentToken) {
-            localStorage.setItem('last_vapid_key', VAPID_KEY);
-            tokenDisplay.textContent = currentToken;
-            permissionStatus.textContent = 'Granted';
-            btnPermission.parentElement.style.display = 'none'; // Hide whole permission container
-
-            // If we have a stale token issue, user can run resetToken() in console
-            window.resetToken = async () => {
+    getTokenPromise = (async () => {
+        try {
+            // Automatically handle stale tokens if VAPID key changed
+            const savedVapid = localStorage.getItem('last_vapid_key');
+            if (savedVapid && savedVapid !== VAPID_KEY) {
+                console.log("VAPID key mismatch detected. Refreshing registration...");
                 await messaging.deleteToken();
-                console.log("Token deleted. Refreshing...");
-                location.reload();
-            };
+                localStorage.setItem('last_vapid_key', VAPID_KEY);
+            }
 
-            // Optional: Load existing settings
-            loadSettings(currentToken);
-        } else {
-            console.log('No registration token available. Request permission to generate one.');
+            let serviceWorkerRegistration;
+            if ('serviceWorker' in navigator) {
+                try {
+                    // Determine the correct path for the service worker
+                    // Ensure we include the current subpath (especially for GitHub Pages)
+                    const scriptsPath = window.location.pathname.endsWith('/')
+                        ? window.location.pathname
+                        : window.location.pathname + '/';
+                    const swUrl = scriptsPath + 'firebase-messaging-sw.js';
+
+                    console.log("Registering service worker at:", swUrl);
+                    serviceWorkerRegistration = await navigator.serviceWorker.register(swUrl);
+                    console.log("Service Worker registered successfully with scope:", serviceWorkerRegistration.scope);
+                } catch (swErr) {
+                    console.error("Manual Service Worker registration failed (falling back to default):", swErr);
+                }
+            }
+
+            const currentToken = await messaging.getToken({
+                vapidKey: VAPID_KEY,
+                serviceWorkerRegistration: serviceWorkerRegistration
+            });
+
+            if (currentToken) {
+                localStorage.setItem('last_vapid_key', VAPID_KEY);
+                tokenDisplay.textContent = currentToken;
+                permissionStatus.textContent = 'Granted';
+                btnPermission.parentElement.style.display = 'none'; // Hide whole permission container
+
+                // If we have a stale token issue, user can run resetToken() in console
+                window.resetToken = async () => {
+                    await messaging.deleteToken();
+                    console.log("Token deleted. Refreshing...");
+                    location.reload();
+                };
+
+                // Optional: Load existing settings
+                loadSettings(currentToken);
+            } else {
+                console.log('No registration token available. Request permission to generate one.');
+            }
+        } catch (err) {
+            console.error('An error occurred while retrieving token. ', err);
+        } finally {
+            getTokenPromise = null;
         }
-    } catch (err) {
-        console.error('An error occurred while retrieving token. ', err);
-    }
+    })();
+
+    return getTokenPromise;
 }
 
 async function loadDailyMessage() {
