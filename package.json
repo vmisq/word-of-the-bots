@@ -1,0 +1,15 @@
+{
+  "name": "daily-notifier",
+  "version": "1.0.0",
+  "description": "Daily motivational message notifier",
+  "main": "app.js",
+  "scripts": {
+    "start": "npx serve ./",
+    "update-message": "node update-daily-message.js",
+    "send-notifications": "node send-daily-notifications.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "node-fetch": "^2.7.0"
+  }
+}

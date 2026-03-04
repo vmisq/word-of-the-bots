@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Firebase / Secrets
+service-account.json
+firebase-debug.log
+.firebase/
+.firebaserc
+
+# OS/IDEs
+.DS_Store
+.vscode/
+.idea/
+
+# Local Config
+config.js

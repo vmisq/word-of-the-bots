@@ -1,0 +1,21 @@
+{
+    "name": "Word of the bots",
+    "short_name": "Word of the bots",
+    "description": "Daily motivational messages from the bot fleet.",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4f46e5",
+    "icons": [
+        {
+            "src": "https://api.dicebear.com/9.x/bottts/png?seed=word-of-the-bots",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://api.dicebear.com/9.x/bottts/png?seed=word-of-the-bots",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

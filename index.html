@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Word of the bots</title>
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Word of the bots">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <link id="favicon" rel="icon" type="image/png" href="https://api.dicebear.com/9.x/bottts/png?seed=word-of-the-bots">
+</head>
+
+<body>
+    <div class="card">
+        <!-- Daily Message Content -->
+        <div id="daily-message-container" style="display: none;">
+            <div class="header">
+                <div class="avatar-container" id="avatar-parent">
+                    <img id="daily-image" src="" alt="Bot">
+                </div>
+                <div class="header-text">
+                    <span id="daily-seed"></span> says:
+                </div>
+            </div>
+            <div class="message-body" id="daily-text">
+                <!-- Message content injected here -->
+            </div>
+        </div>
+
+        <p id="daily-loading">Loading daily message...</p>
+
+        <div class="divider"></div>
+
+        <!-- Settings Section -->
+        <div class="settings" id="notification-settings">
+            <div class="setting-row multi-select-row">
+                <span class="setting-label">Send me notifications:</span>
+                <div class="setting-control full-width">
+                    <div id="time-chips" class="chips-container">
+                        <div class="chip" data-value="never">Never</div>
+                        <div class="chip" data-value="morning">Morning</div>
+                        <div class="chip" data-value="afternoon">Afternoon</div>
+                        <div class="chip" data-value="evening">Evening</div>
+                        <div class="chip" data-value="night">Night</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Hidden checkbox for backward compatibility/internal logic if needed -->
+            <input type="checkbox" id="notifications-enabled" style="display:none">
+        </div>
+
+        <p id="settings-status"></p>
+
+        <!-- Permission Request Section -->
+        <div class="btn-permission-container" id="permission-section">
+            <button id="btn-permission">Enable Notifications</button>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 12px; margin-bottom: 0;">
+                Notification Permission: <span id="permission-status">Not requested</span>
+            </p>
+        </div>
+
+        <!-- Token display (hidden by default, useful for debugging) -->
+        <div id="token-section" style="display:none; margin-top: 20px; font-size: 0.7rem;">
+            <code>Token: <span id="token-display"></span></code>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

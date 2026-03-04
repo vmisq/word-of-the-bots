@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Subscriptions collection
+    match /subscriptions/{token} {
+      // Allow individual devices to manage their own tokens if they know the token ID.
+      // We disallow 'list' to prevent someone from scraping all tokens.
+      allow get, create, update: if true;
+      allow list, delete: if false;
+    }
+    
+    // Data collection
+    match /data/dailyMessage {
+      // Allow public read for the daily message, but strictly no writes.
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
