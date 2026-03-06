@@ -14,12 +14,25 @@ const messaging = firebase.messaging();
 // Handle background messages
 messaging.onBackgroundMessage((payload) => {
     console.log('[firebase-messaging-sw.js] Received background message ', payload);
+    // FCM automatically displays notifications when the payload has a 'notification' property.
+    // Manual 'showNotification' here would cause duplicates.
+});
 
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: payload.notification.icon
-    };
+// Handle notification click to open/focus the app
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
 
-    self.registration.showNotification(notificationTitle, notificationOptions);
+    // This looks for an existing window and focuses it, or opens a new one
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+                if (client.url.includes('word-of-the-bots') && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow('./');
+            }
+        })
+    );
 });
